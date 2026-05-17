@@ -433,6 +433,76 @@ body {
     box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
 }
 
+/* Instant Feedback States */
+.option-btn.instant-correct {
+    background: var(--green-bg) !important;
+    border-color: var(--green) !important;
+    box-shadow: 0 0 20px rgba(0, 184, 148, 0.2);
+    animation: feedbackPop 0.35s ease;
+}
+
+.option-btn.instant-correct .option-letter {
+    background: var(--green) !important;
+    color: white !important;
+}
+
+.option-btn.instant-correct .option-text {
+    color: var(--green) !important;
+    font-weight: 600;
+}
+
+.option-btn.instant-wrong {
+    background: var(--red-bg) !important;
+    border-color: var(--red) !important;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+    animation: feedbackShake 0.4s ease;
+}
+
+.option-btn.instant-wrong .option-letter {
+    background: var(--red) !important;
+    color: white !important;
+}
+
+.option-btn.instant-wrong .option-text {
+    color: var(--red) !important;
+    font-weight: 600;
+}
+
+.option-btn.locked {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.option-btn.locked.instant-correct,
+.option-btn.locked.instant-wrong {
+    opacity: 1;
+}
+
+/* Answered question card borders */
+.question-card.answered-correct {
+    border-color: var(--green-border);
+}
+
+.question-card.answered-wrong {
+    border-color: var(--red-border);
+}
+
+@keyframes feedbackPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+@keyframes feedbackShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+    100% { transform: translateX(0); }
+}
+
 .option-letter {
     width: 32px;
     height: 32px;

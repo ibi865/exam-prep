@@ -127,10 +127,22 @@
 
             let optionsHTML = '';
             const letters = Object.keys(q.options);
+            const alreadyAnswered = userAnswers[idx] !== undefined;
+            const userPick = userAnswers[idx];
+            const correctAns = q.answer;
+
             letters.forEach(letter => {
-                const selected = userAnswers[idx] === letter ? ' selected' : '';
+                let extraClasses = '';
+                if (alreadyAnswered) {
+                    extraClasses += ' locked';
+                    if (letter === correctAns) {
+                        extraClasses += ' instant-correct';
+                    } else if (letter === userPick && userPick !== correctAns) {
+                        extraClasses += ' instant-wrong';
+                    }
+                }
                 optionsHTML += `
-                    <button class="option-btn${selected}" data-q="${idx}" data-opt="${letter}" id="opt-${idx}-${letter}">
+                    <button class="option-btn${extraClasses}" data-q="${idx}" data-opt="${letter}" id="opt-${idx}-${letter}">
                         <span class="option-letter">${letter}</span>
                         <span class="option-text">${q.options[letter]}</span>
                     </button>
@@ -155,16 +167,42 @@
             btn.addEventListener('click', () => {
                 const qIdx = parseInt(btn.dataset.q);
                 const opt = btn.dataset.opt;
+                const question = currentBatchQuestions[qIdx];
+                const correctAnswer = question.answer;
 
-                // Deselect siblings
-                container.querySelectorAll(`[data-q="${qIdx}"]`).forEach(b => b.classList.remove('selected'));
-                
-                // If clicking the same option, deselect it
-                if (userAnswers[qIdx] === opt) {
-                    delete userAnswers[qIdx];
+                // If already answered, do nothing (locked)
+                if (userAnswers[qIdx] !== undefined) return;
+
+                // Record the answer
+                userAnswers[qIdx] = opt;
+
+                // Get all option buttons for this question
+                const allOptionsForQ = container.querySelectorAll(`[data-q="${qIdx}"]`);
+
+                if (opt === correctAnswer) {
+                    // Correct! Mark the selected option green
+                    btn.classList.add('instant-correct');
                 } else {
-                    btn.classList.add('selected');
-                    userAnswers[qIdx] = opt;
+                    // Wrong! Mark selected red, and highlight correct in green
+                    btn.classList.add('instant-wrong');
+                    allOptionsForQ.forEach(b => {
+                        if (b.dataset.opt === correctAnswer) {
+                            b.classList.add('instant-correct');
+                        }
+                    });
+                }
+
+                // Lock all options for this question
+                allOptionsForQ.forEach(b => {
+                    b.classList.add('locked');
+                });
+
+                // Mark the question card with a status border
+                const questionCard = document.getElementById(`question-${qIdx}`);
+                if (opt === correctAnswer) {
+                    questionCard.classList.add('answered-correct');
+                } else {
+                    questionCard.classList.add('answered-wrong');
                 }
 
                 updateProgress();
